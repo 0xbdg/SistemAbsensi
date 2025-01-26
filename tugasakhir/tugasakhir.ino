@@ -25,7 +25,7 @@ byte blockDataRead[18];
 
 const String sheet_url = "SHEET_URL";
 
-const int rs = 27, en = 26, d4 = 34, d5 = 17, d6 = 16, d7 = 14;
+const int rs = 27, en = 26, d4 = 32, d5 = 25, d6 = 13, d7 = 14;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 #define BUZZER_PIN 5
