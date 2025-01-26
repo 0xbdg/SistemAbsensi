@@ -39,7 +39,7 @@ void setup() {
   pinMode(BUZZER_PIN, OUTPUT);
   WiFiManager wm;
 
-  wm.autoConnect("AP-Name", "password");
+  wm.autoConnect("Absensi", "password");
 
   lcd.setCursor(0, 0);
   lcd.print("Tap kartu anda");
@@ -55,13 +55,16 @@ void setup() {
 }
 
 void loop() {
-	if (!mfrc522.PICC_IsNewCardPresent()) {
-		return;
-	}
+  if (!mfrc522.PICC_IsNewCardPresent()) {
+        return;
+  }
 
-	if (!mfrc522.PICC_ReadCardSerial()) {
-		return;
-	}
+  if (!mfrc522.PICC_ReadCardSerial()) {
+	return;
+  }
+
+  lcd.setCursor(0, 0);
+  lcd.print("Tap kartu anda");
   
   Serial.print("Card UID: ");
   MFRC522Debug::PrintUID(Serial, (mfrc522.uid));
@@ -96,17 +99,34 @@ void readDataFromCard(byte blockAddress, byte readBlockData[]){
     Serial.println();
 
     if (data == "" && data.length() <= 0){
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Kartu belum");
+      lcd.setCursor(0, 1);
+      lcd.print("terdaftar!!");
       tone(BUZZER_PIN, 1500);
       delay(500);
       tone(BUZZER_PIN, 1500);
       delay(500);
       noTone(BUZZER_PIN);
+      delay(2000);
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Tap kartu anda");
     }
     else{
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("nama:");
+      lcd.setCursor(0, 1);
+      lcd.print(data);
       tone(BUZZER_PIN, 3000);
       delay(1000);
       noTone(BUZZER_PIN);
       sendData(data);
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("Tap kartu anda");
     }
   }
 }
