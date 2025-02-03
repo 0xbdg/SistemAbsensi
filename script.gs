@@ -1,4 +1,4 @@
-var ss = SpreadsheetApp.openById('1J-5dN056GYmCUCjqARQiZszE2kejEnt7WLkRnYBQWzk'); 
+var ss = SpreadsheetApp.openById('ID'); 
 var sheet = ss.getSheetByName('Siswa');
 var timezone = "Asia/Jakarta"; 
 
