@@ -30,9 +30,6 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "asia.pool.ntp.org", 25200, 60000);
-byte last_second, second_, minute_, hour_, day_, month_;
-char Time[ ] = "TIME:00:00:00";
-char Date[ ] = "DATE:00/00/2000";
 
 void setup() {
   lcd.begin(16,2);
