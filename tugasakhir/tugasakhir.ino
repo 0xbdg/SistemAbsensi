@@ -126,10 +126,11 @@ void verifyData(String uid){
        if (error) {
          lcd.clear();
          lcd.setCursor(0,0);
-         lcd.print("Kartu belum");
+         lcd.setCursor(0,0);
+         lcd.print(uid);
          lcd.setCursor(0,1);
-         lcd.print("terdaftar!!!");
-         delay(2000);
+         lcd.print("belum terdaftar");
+         delay(4000);
          lcd.clear();
          lcd.setCursor(0,0);
          lcd.print(" Tap kartu anda");
