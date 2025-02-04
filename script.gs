@@ -3,6 +3,7 @@ var sheet = ss.getSheetByName('Siswa');
 var timezone = "Asia/Jakarta"; 
 
 function doGet(e){
+  var batasWaktu = '08:00:00';
   Logger.log( JSON.stringify(e) );
   if (e.parameter == 'undefined') {
     return ContentService.createTextOutput("Received data is undefined");
@@ -13,6 +14,7 @@ function doGet(e){
   var nama = e.parameters.nama ? stripQuotes(e.parameter.nama) : '';
   var kelas = e.parameters.kelas ? stripQuotes(e.parameter.kelas) : '';
   var jurusan = e.parameters.jurusan ? stripQuotes(e.parameter.jurusan) : '';
+  var status = (Curr_Time > batasWaktu) ? "Terlambat" : "Tepat waktu";
 
   var nextRow = sheet.getLastRow() + 1;
   sheet.getRange("A" + nextRow).setValue(Curr_Date);
@@ -20,6 +22,7 @@ function doGet(e){
   sheet.getRange("C" + nextRow).setValue(nama);
   sheet.getRange("D" + nextRow).setValue(kelas);
   sheet.getRange("E" + nextRow).setValue(jurusan);
+  sheet.getRange("F" + nextRow).setValue(status);
 
   return ContentService.createTextOutput("Data terkirim");
 }
