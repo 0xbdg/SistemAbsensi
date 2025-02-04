@@ -110,13 +110,12 @@ String getUID(){
 
 String urlEncode(String str) {
   String encoded = "";
-  
-  // Loop through each character in the string
+
   for (int i = 0; i < str.length(); i++) {
     if (str[i] == ' ') {
-      encoded += "%20";  // Replace space with %20
+      encoded += "%20";  
     } else {
-      encoded += str[i];  // Keep other characters the same
+      encoded += str[i]; 
     }
   }
   
