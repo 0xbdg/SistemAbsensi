@@ -108,6 +108,21 @@ String getUID(){
   return uidString;
 }
 
+String urlEncode(String str) {
+  String encoded = "";
+  
+  // Loop through each character in the string
+  for (int i = 0; i < str.length(); i++) {
+    if (str[i] == ' ') {
+      encoded += "%20";  // Replace space with %20
+    } else {
+      encoded += str[i];  // Keep other characters the same
+    }
+  }
+  
+  return encoded;
+}
+
 void verifyData(String uid){
   if (WiFi.status() == WL_CONNECTED){
     HTTPClient http;
@@ -144,7 +159,7 @@ void verifyData(String uid){
          lcd.print("DATE:"+getDate());
          lcd.setCursor(0,1);
          lcd.print("TIME:"+getTime());
-         String nama = doc["nama"];
+         String nama = urlEncode(doc["nama"]);
          String kelas = doc["kelas"];
          String jurusan = doc["jurusan"];
 
