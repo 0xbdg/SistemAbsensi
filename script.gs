@@ -1,32 +1,57 @@
 var ss = SpreadsheetApp.openById('ID'); 
-var sheet = ss.getSheetByName('Siswa');
+var sheet = ss.getSheetByName('Sheet1');
 var timezone = "Asia/Jakarta"; 
 
-function doGet(e){
-  var batasWaktu = '08:00:00';
-  Logger.log( JSON.stringify(e) );
-  if (e.parameter == 'undefined') {
+function doGet(e) {
+  var batasWaktu = '07:40:00';
+  Logger.log(JSON.stringify(e));
+  if (!e.parameter || e.parameter.nama === undefined) {
     return ContentService.createTextOutput("Received data is undefined");
   }
 
-  var Curr_Date = new Date();
-  var Curr_Time = Utilities.formatDate(Curr_Date, timezone, 'HH:mm:ss');
-  var nama = e.parameters.nama ? stripQuotes(e.parameter.nama) : '';
-  var kelas = e.parameters.kelas ? stripQuotes(e.parameter.kelas) : '';
-  var jurusan = e.parameters.jurusan ? stripQuotes(e.parameter.jurusan) : '';
-  var status = (Curr_Time > batasWaktu) ? "Terlambat" : "Tepat waktu";
+  var currDate = new Date();
+  var currDateStr = Utilities.formatDate(currDate, timezone, 'yyyy-MM-dd');
+  var currTime = Utilities.formatDate(currDate, timezone, 'HH:mm:ss');
+  
+  var nama = e.parameter.nama ? stripQuotes(e.parameter.nama) : '';
+  var kelas = e.parameter.kelas ? stripQuotes(e.parameter.kelas) : '';
+  var jurusan = e.parameter.jurusan ? stripQuotes(e.parameter.jurusan) : '';
+  var status = (currTime > batasWaktu) ? "Terlambat" : "Tepat waktu";
 
-  var nextRow = sheet.getLastRow() + 1;
-  sheet.getRange("A" + nextRow).setValue(Curr_Date);
-  sheet.getRange("B" + nextRow).setValue(Curr_Time);
-  sheet.getRange("C" + nextRow).setValue(nama);
-  sheet.getRange("D" + nextRow).setValue(kelas);
-  sheet.getRange("E" + nextRow).setValue(jurusan);
-  sheet.getRange("F" + nextRow).setValue(status);
+  var data = sheet.getDataRange().getValues();
+  var found = false;
+
+  for (var i = 1; i < data.length; i++) {
+    var rowDate = Utilities.formatDate(new Date(data[i][0]), timezone, 'yyyy-MM-dd');
+    var rowNama = data[i][3];
+    
+    if (rowDate === currDateStr && rowNama === nama) {
+      // Found existing record
+      if (data[i][2] === "") {
+        sheet.getRange(i + 1, 3).setValue(currTime); // Waktu Keluar (Column G)
+        found = true;
+        break;
+      } else {
+        found = true;
+        break;
+      }
+    }
+  }
+
+  if (!found) {
+    var nextRow = sheet.getLastRow() + 1;
+    sheet.getRange("A" + nextRow).setValue(currDate);          
+    sheet.getRange("B" + nextRow).setValue(currTime);          
+    sheet.getRange("C" + nextRow).setValue("");             
+    sheet.getRange("D" + nextRow).setValue(nama);             
+    sheet.getRange("E" + nextRow).setValue(kelas);           
+    sheet.getRange("F" + nextRow).setValue(jurusan);            
+    sheet.getRange("G" + nextRow).setValue(status);                
+  }
 
   return ContentService.createTextOutput("Data terkirim");
 }
 
-function stripQuotes( value ) {
+function stripQuotes(value) {
   return value.toString().replace(/^["']|['"]$/g, "");
 }
