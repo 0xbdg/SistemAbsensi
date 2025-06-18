@@ -23,7 +23,13 @@ MFRC522::MIFARE_Key key;
 const String sheet_url = "SHEET_URL";
 const String api_endpoint_url = "ENDPOINT_URL";
 
-const int rs = 27, en = 26, d4 = 32, d5 = 25, d6 = 13, d7 = 14;
+// ESP8266 (RS = D2, EN = D3, D4 = D5, D5 = D6, D6 = D7, D7 = D8)
+const int rs = 4, en = 26, d4 = 12, d5 = 13, d6 = 15, d7 = 3;
+// ESP8266 (END)
+
+// ESP32
+//const int rs = 27, en = 26, d4 = 32, d5 = 25, d6 = 13, d7 = 14;
+//ESP32 (END)
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 #define BUZZER_PIN 5
