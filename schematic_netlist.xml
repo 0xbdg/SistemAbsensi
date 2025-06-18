@@ -1,0 +1,301 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Fritzing (https://fritzing.org/) -->
+<netlist date="Wed Jun 18 19:29:21 2025" sketch="schematic.fzz">
+ <net>
+  <connector name="leg2" id="connector2">
+   <part title="Rotary Potentiometer (Small)" label="R1" id="854122920"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="V0" id="connector2">
+   <part title="LCD screen" label="LCD1" id="66150"/>
+  </connector>
+  <connector name="wiper" id="connector1">
+   <part title="Rotary Potentiometer (Small)" label="R1" id="854122920"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="leg1" id="connector0">
+   <part title="Rotary Potentiometer (Small)" label="R1" id="854122920"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 20" id="connector20">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+  <connector name="SQW" id="connector4">
+   <part title="ZS-042 RTC Module" label="ZS-042 RTC1" id="854120710"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 27" id="connector27">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+  <connector name="SDA" id="connector2">
+   <part title="ZS-042 RTC Module" label="ZS-042 RTC1" id="854120710"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 30" id="connector30">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+  <connector name="SCL" id="connector3">
+   <part title="ZS-042 RTC Module" label="ZS-042 RTC1" id="854120710"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="VCC" id="connector1">
+   <part title="ZS-042 RTC Module" label="ZS-042 RTC1" id="854120710"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="GND" id="connector0">
+   <part title="ZS-042 RTC Module" label="ZS-042 RTC1" id="854120710"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="GND" id="connector13">
+   <part title="RFID-RC522-v2" label="Part1" id="854100340"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="VDD" id="connector1">
+   <part title="LCD screen" label="LCD1" id="66150"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="LED-" id="connector15">
+   <part title="LCD screen" label="LCD1" id="66150"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 16" id="connector16">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+  <connector name="LED+" id="connector14">
+   <part title="LCD screen" label="LCD1" id="66150"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="VSS" id="connector0">
+   <part title="LCD screen" label="LCD1" id="66150"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 15" id="connector15">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+  <connector name="R/W" id="connector4">
+   <part title="LCD screen" label="LCD1" id="66150"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 21" id="connector21">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+  <connector name="SDA" id="connector8">
+   <part title="RFID-RC522-v2" label="Part1" id="854100340"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 17" id="connector17">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+  <connector name="3.3V" id="connector15">
+   <part title="RFID-RC522-v2" label="Part1" id="854100340"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 19" id="connector19">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+  <connector name="RST" id="connector14">
+   <part title="RFID-RC522-v2" label="Part1" id="854100340"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 26" id="connector26">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+  <connector name="IRQ" id="connector12">
+   <part title="RFID-RC522-v2" label="Part1" id="854100340"/>
+  </connector>
+  <connector name="MISO" id="connector11">
+   <part title="RFID-RC522-v2" label="Part1" id="854100340"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 31" id="connector31">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+  <connector name="MOSI" id="connector10">
+   <part title="RFID-RC522-v2" label="Part1" id="854100340"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 25" id="connector25">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+  <connector name="pin 9" id="connector9">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+  <connector name="SCK" id="connector9">
+   <part title="RFID-RC522-v2" label="Part1" id="854100340"/>
+  </connector>
+  <connector name="DB5" id="connector11">
+   <part title="LCD screen" label="LCD1" id="66150"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 12" id="connector12">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+  <connector name="DB7" id="connector13">
+   <part title="LCD screen" label="LCD1" id="66150"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 10" id="connector10">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+  <connector name="E" id="connector5">
+   <part title="LCD screen" label="LCD1" id="66150"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 11" id="connector11">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+  <connector name="RS" id="connector3">
+   <part title="LCD screen" label="LCD1" id="66150"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin2" id="connector1">
+   <part title="Piezo Speaker" label="J1" id="854106640"/>
+  </connector>
+  <connector name="pin 24" id="connector24">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+  <connector name="pin 8" id="connector8">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+  <connector name="pin 28" id="connector28">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin1" id="connector0">
+   <part title="Piezo Speaker" label="J1" id="854106640"/>
+  </connector>
+  <connector name="pin 18" id="connector18">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 7" id="connector7">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+  <connector name="DB4" id="connector10">
+   <part title="LCD screen" label="LCD1" id="66150"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 14" id="connector14">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+  <connector name="DB6" id="connector12">
+   <part title="LCD screen" label="LCD1" id="66150"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="VCC" id="connector7">
+   <part title="ZS-042 RTC Module" label="ZS-042 RTC1" id="854120710"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="32K" id="connector5">
+   <part title="ZS-042 RTC Module" label="ZS-042 RTC1" id="854120710"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="GND" id="connector6">
+   <part title="ZS-042 RTC Module" label="ZS-042 RTC1" id="854120710"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="SDA" id="connector8">
+   <part title="ZS-042 RTC Module" label="ZS-042 RTC1" id="854120710"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="SCL" id="connector9">
+   <part title="ZS-042 RTC Module" label="ZS-042 RTC1" id="854120710"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 3" id="connector3">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 22" id="connector22">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 4" id="connector4">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 2" id="connector2">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 29" id="connector29">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 13" id="connector13">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 5" id="connector5">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 23" id="connector23">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="pin 6" id="connector6">
+   <part title=" NodeMCU WROOM ESP 32" label="CPU1" id="854101540"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="DB1" id="connector7">
+   <part title="LCD screen" label="LCD1" id="66150"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="DB0" id="connector6">
+   <part title="LCD screen" label="LCD1" id="66150"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="DB2" id="connector8">
+   <part title="LCD screen" label="LCD1" id="66150"/>
+  </connector>
+ </net>
+ <net>
+  <connector name="DB3" id="connector9">
+   <part title="LCD screen" label="LCD1" id="66150"/>
+  </connector>
+ </net>
+</netlist>

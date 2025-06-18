@@ -144,6 +144,7 @@ void verifyData(String uid){
          lcd.print(uid);
          lcd.setCursor(0,1);
          lcd.print("belum terdaftar");
+         digitalWrite(BUZZER_PIN,HIGH);
          delay(4000);
          lcd.clear();
          lcd.setCursor(0,0);
@@ -163,7 +164,6 @@ void verifyData(String uid){
          String jurusan = doc["jurusan"];
 
          sendDataToSpreadsheet(nama, kelas, jurusan);
-
 
          delay(2000);
          lcd.clear();
