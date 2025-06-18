@@ -144,8 +144,9 @@ void verifyData(String uid){
          lcd.print(uid);
          lcd.setCursor(0,1);
          lcd.print("belum terdaftar");
-         digitalWrite(BUZZER_PIN,HIGH);
+         tone(BUZZER_PIN,3000);
          delay(4000);
+         noTone(BUZZER_PIN);
          lcd.clear();
          lcd.setCursor(0,0);
          lcd.print(" Tap kartu anda");
