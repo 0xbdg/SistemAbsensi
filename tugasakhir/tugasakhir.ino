@@ -16,20 +16,15 @@ MFRC522DriverPinSimple ss_pin(4);
 
 MFRC522DriverSPI driver{ss_pin}; 
 
-MFRC522 mfrc522{driver};        
+MFRC522 mfrc522(driver);        
 
 MFRC522::MIFARE_Key key;
 
 const String sheet_url = "SHEET_URL";
-const String api_endpoint_url = "ENDPOINT_URL";
+const String api_endpoint_url = "API_URL";
 
-// ESP8266 (RS = D2, EN = D3, D4 = D5, D5 = D6, D6 = D7, D7 = D8)
-const int rs = 4, en = 26, d4 = 12, d5 = 13, d6 = 15, d7 = 3;
-// ESP8266 (END)
+const int rs = 27, en = 26, d4 = 32, d5 = 25, d6 = 13, d7 = 14;
 
-// ESP32
-//const int rs = 27, en = 26, d4 = 32, d5 = 25, d6 = 13, d7 = 14;
-//ESP32 (END)
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 #define BUZZER_PIN 5
@@ -38,7 +33,7 @@ WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "asia.pool.ntp.org", 25200, 60000);
 
 void setup() {
-  lcd.begin(16,2);
+  lcd.begin(20,4);
   SPI.begin();
   WiFi.mode(WIFI_STA);
   Serial.begin(9600); 
@@ -47,8 +42,10 @@ void setup() {
 
   wm.autoConnect("Absensi", "password");
   pinMode(BUZZER_PIN, OUTPUT);
-  lcd.setCursor(0, 0);
-  lcd.print(" Tap kartu anda");
+  lcd.setCursor(1, 0);
+  lcd.print("Metschoo Attendance");
+  lcd.setCursor(3, 2);
+  lcd.print("Tap kartu anda");
 
   while (!Serial);       // Do nothing if no serial port is opened (added for Arduinos based on ATMEGA32U4).
   
@@ -146,16 +143,19 @@ void verifyData(String uid){
        if (error) {
          lcd.clear();
          lcd.setCursor(0,0);
-         lcd.setCursor(0,0);
-         lcd.print(uid);
+         lcd.print("ERROR CODE:"+uid);
          lcd.setCursor(0,1);
-         lcd.print("belum terdaftar");
+         lcd.print("kartu belum terdaftar");
+         lcd.setCursor(0,2);
+         lcd.print("Harap hubungi teknisi");
          tone(BUZZER_PIN,3000);
-         delay(4000);
+         delay(2000);
          noTone(BUZZER_PIN);
          lcd.clear();
-         lcd.setCursor(0,0);
-         lcd.print(" Tap kartu anda");
+         lcd.setCursor(1,0);
+         lcd.print("Metschoo Attendance");
+         lcd.setCursor(3,2);
+         lcd.print("Tap kartu anda");
          Serial.print("Failed to parse JSON: ");
          Serial.println(error.f_str());
          return;
@@ -163,19 +163,28 @@ void verifyData(String uid){
        else{
          lcd.clear();
          lcd.setCursor(0,0);
-         lcd.print("DATE:"+getDate());
+         lcd.print("NAMA:"+String(doc["nama"]));
          lcd.setCursor(0,1);
-         lcd.print("TIME:"+getTime());
+         lcd.print("KELAS:"+String(doc["kelas"]) + " " + String(doc["jurusan"]) );
+         lcd.setCursor(0,2);
+         lcd.print("TANGGAL:"+getDate());
+         lcd.setCursor(0,3);
+         lcd.print("WAKTU:"+getTime());
          String nama = urlEncode(doc["nama"]);
          String kelas = doc["kelas"];
          String jurusan = doc["jurusan"];
 
          sendDataToSpreadsheet(nama, kelas, jurusan);
+         tone(BUZZER_PIN, 1000);
 
          delay(2000);
+         noTone(BUZZER_PIN);
          lcd.clear();
-         lcd.setCursor(0,0);
-         lcd.print(" Tap kartu anda");
+         lcd.setCursor(1,0);
+         lcd.print("Metschoo Attendance");
+         lcd.setCursor(3,2);
+         lcd.print("Tap kartu anda");
+ 
        }
     }
     else {
