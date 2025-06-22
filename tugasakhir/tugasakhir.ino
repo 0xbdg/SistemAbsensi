@@ -9,8 +9,7 @@
 #include <WiFi.h>
 #include <ArduinoJson.h>
 #include <HTTPClient.h>
-#include <WiFiUdp.h>
-#include <NTPClient.h>               
+#include <RTClib.h>             
 
 MFRC522DriverPinSimple ss_pin(4);
 
@@ -27,32 +26,46 @@ const int rs = 27, en = 26, d4 = 32, d5 = 25, d6 = 13, d7 = 14;
 
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
-#define BUZZER_PIN 5
+RTC_DS3231 rtc;
 
-WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "asia.pool.ntp.org", 25200, 60000);
+#define RTC_INTERRUPT_PIN 33
+#define BUZZER_PIN 5
 
 void setup() {
   lcd.begin(20,4);
   SPI.begin();
   WiFi.mode(WIFI_STA);
+
+  if(!rtc.begin()) {
+    Serial.println("Couldn't find RTC!");
+    Serial.flush();
+    while (1) delay(10);
+  }
+
+  if(rtc.lostPower()) {
+    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  }
+
+  rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+
   Serial.begin(9600); 
   
   WiFiManager wm;
 
   wm.autoConnect("Absensi", "password");
+
   pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(RTC_INTERRUPT_PIN, INPUT_PULLUP);
+
   lcd.setCursor(1, 0);
   lcd.print("Metschoo Attendance");
   lcd.setCursor(3, 2);
   lcd.print("Tap kartu anda");
 
-  while (!Serial);       // Do nothing if no serial port is opened (added for Arduinos based on ATMEGA32U4).
+  while (!Serial);
   
-  mfrc522.PCD_Init();    // Init MFRC522 board.
-  MFRC522Debug::PCD_DumpVersionToSerial(mfrc522, Serial);  // Show details of PCD - MFRC522 Card Reader details.
-  
-  timeClient.begin();
+  mfrc522.PCD_Init();
+  MFRC522Debug::PCD_DumpVersionToSerial(mfrc522, Serial);
 }
 
 void loop() {
@@ -63,8 +76,7 @@ void loop() {
   if (!mfrc522.PICC_ReadCardSerial()) {
         return;
   }
-
-  
+ 
   Serial.print("Card UID: ");
   MFRC522Debug::PrintUID(Serial, (mfrc522.uid));
   Serial.println();
@@ -77,26 +89,18 @@ void loop() {
 }
 
 String getDate(){
-  timeClient.update();
-  unsigned long epochTime = timeClient.getEpochTime(); 
-  
-  int days = epochTime / 86400L;
-  int year = 1970 + (days / 365);
-  days %= 365;
-  int month = 1 + (days / 30);
-  int day = days % 30 + 1;
-
+  DateTime now = rtc.now();
+  String year = String(now.year(), DEC);
+  String month = (now.month() < 10 ? "0" : "") + String(now.month(), DEC);
+  String day = (now.day() < 10 ? "0" : "") + String(now.day(), DEC);
   return String(day) +"/"+ String(month)+"/"+String(year);
 }
 
 String getTime(){
-  timeClient.update();
-  unsigned long epochTime = timeClient.getEpochTime(); 
-  
-  int currentHour = (epochTime % 86400L) / 3600;  // Extract hour
-  int currentMinute = (epochTime % 3600) / 60;    // Extract minute
-  int currentSecond = epochTime % 60;              // Extract second
-
+  DateTime now = rtc.now();
+  String currentHour = (now.hour() < 10 ? "0" : "") + String(now.hour(), DEC); 
+  String currentMinute = (now.minute() < 10 ? "0" : "") + String(now.minute(), DEC);
+  String currentSecond = (now.second() < 10 ? "0" : "") + String(now.second(), DEC);
   return String(currentHour) +":"+ String(currentMinute)+":"+String(currentSecond);
 }
 
