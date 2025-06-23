@@ -28,6 +28,8 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 RTC_DS3231 rtc;
 
+//RTC_DS1302 rtc;
+
 #define RTC_INTERRUPT_PIN 33
 #define BUZZER_PIN 5
 
