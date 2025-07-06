@@ -9,7 +9,7 @@
 #include <WiFi.h>
 #include <ArduinoJson.h>
 #include <HTTPClient.h>
-#include <RTClib.h>             
+#include <RTClib.h>            
 
 MFRC522DriverPinSimple ss_pin(4);
 
@@ -35,9 +35,10 @@ RTC_DS3231 rtc;
 
 void setup() {
   lcd.begin(20,4);
-  SPI.begin();
   WiFi.mode(WIFI_STA);
-
+ 
+  Serial.begin(9600); 
+   
   if(!rtc.begin()) {
     Serial.println("Couldn't find RTC!");
     Serial.flush();
@@ -49,13 +50,11 @@ void setup() {
   }
 
   rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-
-  Serial.begin(9600); 
   
   WiFiManager wm;
 
   wm.autoConnect("Absensi", "password");
-
+ 
   pinMode(BUZZER_PIN, OUTPUT);
   pinMode(RTC_INTERRUPT_PIN, INPUT_PULLUP);
 
@@ -65,7 +64,7 @@ void setup() {
   lcd.print("Tap kartu anda");
 
   while (!Serial);
-  
+  SPI.begin();
   mfrc522.PCD_Init();
   MFRC522Debug::PCD_DumpVersionToSerial(mfrc522, Serial);
 }
@@ -86,6 +85,9 @@ void loop() {
   String uid = getUID();
   Serial.println(uid);
   verifyData(uid);
+
+  mfrc522.PICC_HaltA();
+  mfrc522.PCD_StopCrypto1();
   delay(1000);
   
 }
@@ -149,7 +151,7 @@ void verifyData(String uid){
        if (error) {
          lcd.clear();
          lcd.setCursor(0,0);
-         lcd.print("ERROR CODE:"+uid);
+         lcd.print(uid);
          lcd.setCursor(0,1);
          lcd.print("kartu belum terdaftar");
          lcd.setCursor(0,2);
@@ -190,7 +192,7 @@ void verifyData(String uid){
          lcd.print("Metschoo Attendance");
          lcd.setCursor(3,2);
          lcd.print("Tap kartu anda");
- 
+         return;
        }
     }
     else {
