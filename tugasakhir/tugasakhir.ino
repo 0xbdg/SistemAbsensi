@@ -151,11 +151,13 @@ void verifyData(String uid){
        if (error) {
          lcd.clear();
          lcd.setCursor(0,0);
-         lcd.print(uid);
+         lcd.print("ERROR code:");
          lcd.setCursor(0,1);
-         lcd.print("kartu belum terdaftar");
+         lcd.print(uid);
          lcd.setCursor(0,2);
-         lcd.print("Harap hubungi teknisi");
+         lcd.print("kartu belum terdaftar");
+         lcd.setCursor(0,3);
+         lcd.print("Coba hubungi teknisi");
          tone(BUZZER_PIN,3000);
          delay(2000);
          noTone(BUZZER_PIN);
