@@ -9,7 +9,7 @@
 #include <WiFi.h>
 #include <ArduinoJson.h>
 #include <HTTPClient.h>
-#include <RTClib.h>            
+#include "time.h"
 
 MFRC522DriverPinSimple ss_pin(4);
 
@@ -26,38 +26,19 @@ const int rs = 27, en = 26, d4 = 32, d5 = 25, d6 = 13, d7 = 14;
 
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
-RTC_DS3231 rtc;
-
-//RTC_DS1302 rtc;
-
-#define RTC_INTERRUPT_PIN 33
 #define BUZZER_PIN 5
 
 void setup() {
   lcd.begin(20,4);
   WiFi.mode(WIFI_STA);
  
-  Serial.begin(9600); 
-   
-  if(!rtc.begin()) {
-    Serial.println("Couldn't find RTC!");
-    Serial.flush();
-    while (1) delay(10);
-  }
-
-  if(rtc.lostPower()) {
-    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-  }
-
-  rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-  
+  Serial.begin(9600);  
+  configTime( 25200, 0, "pool.ntp.org");
   WiFiManager wm;
 
   wm.autoConnect("Absensi", "password");
  
   pinMode(BUZZER_PIN, OUTPUT);
-  pinMode(RTC_INTERRUPT_PIN, INPUT_PULLUP);
-
   lcd.setCursor(1, 0);
   lcd.print("Metschoo Attendance");
   lcd.setCursor(3, 2);
@@ -93,19 +74,44 @@ void loop() {
 }
 
 String getDate(){
-  DateTime now = rtc.now();
-  String year = String(now.year(), DEC);
-  String month = (now.month() < 10 ? "0" : "") + String(now.month(), DEC);
-  String day = (now.day() < 10 ? "0" : "") + String(now.day(), DEC);
-  return String(day) +"/"+ String(month)+"/"+String(year);
+  struct tm timeinfo;
+  if(!getLocalTime(&timeinfo)){
+    Serial.println("Failed to obtain time");
+  } 
+
+  char year[5];
+  strftime(year, sizeof(year),"%Y", &timeinfo);
+  char month[3];
+  strftime(month, sizeof(month), "%B", &timeinfo);
+  char day[3];
+  strftime(day, sizeof(day), "%d", &timeinfo);
+
+  String yearStr = String(year);
+  String monthStr = String(month);
+  String dayStr = String(day);
+
+
+  return dayStr+"/"+monthStr+"/"+yearStr;
 }
 
 String getTime(){
-  DateTime now = rtc.now();
-  String currentHour = (now.hour() < 10 ? "0" : "") + String(now.hour(), DEC); 
-  String currentMinute = (now.minute() < 10 ? "0" : "") + String(now.minute(), DEC);
-  String currentSecond = (now.second() < 10 ? "0" : "") + String(now.second(), DEC);
-  return String(currentHour) +":"+ String(currentMinute)+":"+String(currentSecond);
+  struct tm timeinfo;
+  if(!getLocalTime(&timeinfo)){
+      Serial.println("Failed to obtain time");
+  }
+
+  char currentHour[3];
+  strftime(currentHour, sizeof(currentHour), "%H", &timeinfo);
+  char currentMinute[3];
+  strftime(currentMinute, sizeof(currentMinute), "%M", &timeinfo);
+  char currentSecond[3];
+  strftime(currentSecond, sizeof(currentSecond), "%S", &timeinfo );
+
+  String currentHourStr = String(currentHour);
+  String currentMinuteStr = String(currentMinute);
+  String currentSecondStr = String(currentSecond);
+
+  return currentHourStr +":"+ currentMinuteStr+":"+currentSecondStr;
 }
 
 String getUID(){
@@ -171,20 +177,22 @@ void verifyData(String uid){
          return;
        }
        else{
+         String nama = doc["nama"];
+         String kelas = doc["kelas"];
+         String jurusan = doc["jurusan"];
+
+         sendDataToSpreadsheet(urlEncode(nama), kelas, jurusan);
+
          lcd.clear();
          lcd.setCursor(0,0);
-         lcd.print("NAMA:"+String(doc["nama"]));
+         lcd.print("NAMA:"+String(nama));
          lcd.setCursor(0,1);
-         lcd.print("KELAS:"+String(doc["kelas"]) + " " + String(doc["jurusan"]) );
+         lcd.print("KELAS:"+String(kelas) + " " + String(jurusan) );
          lcd.setCursor(0,2);
          lcd.print("TANGGAL:"+getDate());
          lcd.setCursor(0,3);
          lcd.print("WAKTU:"+getTime());
-         String nama = urlEncode(doc["nama"]);
-         String kelas = doc["kelas"];
-         String jurusan = doc["jurusan"];
-
-         sendDataToSpreadsheet(nama, kelas, jurusan);
+ 
          tone(BUZZER_PIN, 1000);
 
          delay(2000);
