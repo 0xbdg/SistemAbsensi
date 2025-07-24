@@ -9,7 +9,13 @@
 #include <WiFi.h>
 #include <ArduinoJson.h>
 #include <HTTPClient.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include <UniversalTelegramBot.h>
+
+#include "SPIFFS.h"
 #include "time.h"
+#include "web.h"
 
 MFRC522DriverPinSimple ss_pin(4);
 
@@ -19,8 +25,7 @@ MFRC522 mfrc522(driver);
 
 MFRC522::MIFARE_Key key;
 
-const String sheet_url = "SHEET_URL";
-const String api_endpoint_url = "API_URL";
+const char* CONFIG_FILE = "/config.json";
 
 const int rs = 27, en = 26, d4 = 32, d5 = 25, d6 = 13, d7 = 14;
 
@@ -28,15 +33,119 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 #define BUZZER_PIN 5
 
+AsyncWebServer server(80);
+
+struct Config {
+  String wifi_ssid;
+  String wifi_pass;
+  String admin_name;
+  String admin_pass;
+  String bot_token;
+  String chat_id;
+  String sheet_url;
+  String sheet_name;
+  String api_endpoint_url;
+} config;
+
+bool loadConfig() {
+  if (!SPIFFS.exists(CONFIG_FILE)) return false;
+
+  File file = SPIFFS.open(CONFIG_FILE, "r");
+  if (!file) return false;
+
+  StaticJsonDocument<512> doc;
+  DeserializationError error = deserializeJson(doc, file);
+  file.close();
+  if (error) return false;
+
+  config.wifi_ssid = doc["wifi_ssid"].as<String>();
+  config.wifi_pass = doc["wifi_pass"].as<String>();
+
+  config.admin_name = doc["admin_name"].as<String>();
+  config.admin_pass = doc["admin_pass"].as<String>();
+
+  config.bot_token = doc["bot_token"].as<String>();
+  config.chat_id = doc["chat_id"].as<String>();
+
+  config.sheet_url = doc["sheet_url"].as<String>();
+  config.sheet_name = doc["sheet_name"].as<String>();
+
+  config.api_endpoint_url = doc["api_endpoint_url"].as<String>();
+
+  return true;
+}
+
+bool saveConfig() {
+  StaticJsonDocument<512> doc;
+  doc["wifi_ssid"] = config.wifi_ssid;
+  doc["wifi_pass"] = config.wifi_pass;
+  doc["admin_name"] = config.admin_name;
+  doc["admin_pass"] = config.admin_pass;
+  doc["bot_token"] = config.bot_token;
+  doc["chat_id"] = config.chat_id;
+  doc["sheet_url"] = config.sheet_url;
+  doc["sheet_name"] = config.sheet_name;
+  doc["api_endpoint_url"] = config.api_url;
+
+  File file = SPIFFS.open(CONFIG_FILE, "w");
+  if (!file) return false;
+
+  serializeJson(doc, file);
+  file.close();
+  return true;
+}
+
+String processor(const String& var) {
+  if (var == "SSID") return config.wifi_ssid;
+  if (var == "PASS") return config.wifi_pass;
+  if (var == "USERNAME") return config.admin_name;
+  if (var == "USER_PASS") return config.admin_pass;
+  return String();
+}
+
+void telegram_notify(){
+}
+
 void setup() {
   lcd.begin(20,4);
   WiFi.mode(WIFI_STA);
  
   Serial.begin(9600);  
   configTime( 25200, 0, "pool.ntp.org");
-  WiFiManager wm;
+  WiFiManager wm; 
 
-  wm.autoConnect("Absensi", "password");
+  if(!SPIFFS.begin(true)){
+    Serial.println("An Error has occurred while mounting SPIFFS");
+    return;
+  }
+
+  if (!loadConfig()) {
+    Serial.println("No config found, setting defaults...");
+    config.wifi_ssid = "0xbdg";
+    config.wifi_pass = "metschoo";
+    config.admin_name = "admin";
+    config.admin_pass = "admin";
+    config.bot_token = "-";
+    config.chat_id = "-";
+    config.sheet_url = "-";
+    config.sheet_name = "-";
+    config.api_endpoint_url = "-";
+    saveConfig();
+  }
+
+  bool check;
+  check = wm.autoConnect(config.wifi_ssid.c_str(), config.wifi_pass.c_str());
+
+  if(!check){
+    Serial.println("connecting...");
+    lcd.setCursor(0,0);
+    lcd.print("gagal terkoneksi");
+    lcd.setCursor(0,1);
+    lcd.print("ke internet!!");
+  }
+
+  lcd.clear();
+  Serial.println(WiFi.localIP());
  
   pinMode(BUZZER_PIN, OUTPUT);
   lcd.setCursor(1, 0);
@@ -48,6 +157,34 @@ void setup() {
   SPI.begin();
   mfrc522.PCD_Init();
   MFRC522Debug::PCD_DumpVersionToSerial(mfrc522, Serial);
+
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+      if(!request->authenticate(config.admin_name.c_str(), config.admin_pass.c_str()))
+          return request->requestAuthentication();
+      request->send(200, "text/html", index_html, processor);
+  });
+
+  server.on("/logout", HTTP_GET, [](AsyncWebServerRequest *request){
+      request->send(401);
+  });
+
+  server.on("/logged-out", HTTP_GET, [](AsyncWebServerRequest *request){
+      request->send(200, "text/html", logout_html);
+  });
+
+  server.on("/save-wifi", HTTP_POST, [](AsyncWebServerRequest *request){
+    if(request->hasParam("ssid", true)) config.wifi_ssid = request->getParam("ssid", true)->value();
+    if(request->hasParam("password", true)) config.wifi_pass = request->getParam("password", true)->value();
+
+    if(saveConfig()) {
+      request->send(200, "text/html", "<h2>WiFi Saved. Restarting...</h2>");
+      delay(1000); 
+    } else {
+      request->send(500, "text/plain", "Failed to save WiFi config");
+    }
+  });
+
+  server.begin();
 }
 
 void loop() {
@@ -142,7 +279,7 @@ String urlEncode(String str) {
 void verifyData(String uid){
   if (WiFi.status() == WL_CONNECTED){
     HTTPClient http;
-    http.begin(api_endpoint_url + uid);
+    http.begin(config.api_endpoint_url + uid);
 
     int httpCode = http.GET();
 
@@ -181,7 +318,7 @@ void verifyData(String uid){
          String kelas = doc["kelas"];
          String jurusan = doc["jurusan"];
 
-         sendDataToSpreadsheet(urlEncode(nama), kelas, jurusan);
+         sendDataToSpreadsheet(urlEncode(nama), kelas, jurusan, urlEncode(sheet_name));
 
          lcd.clear();
          lcd.setCursor(0,0);
@@ -213,12 +350,12 @@ void verifyData(String uid){
   }
 }
 
-void sendDataToSpreadsheet(String nama, String kelas, String jurusan){
+void sendDataToSpreadsheet(String nama, String kelas, String jurusan, String sheet){
   if (WiFi.status() == WL_CONNECTED){
     HTTPClient http;
-    String payload = "?nama="+nama+"&kelas="+kelas+"&jurusan="+jurusan;
+    String payload = "?sheet="+config.sheet_name+"&nama="+nama+"&kelas="+kelas+"&jurusan="+jurusan;
 
-    http.begin(sheet_url + payload);
+    http.begin(config.sheet_url + payload);
 
     int status_code = http.GET();
 
