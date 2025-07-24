@@ -326,7 +326,7 @@ void verifyData(String uid){
          String kelas = doc["kelas"];
          String jurusan = doc["jurusan"];
 
-         sendDataToSpreadsheet(urlEncode(nama), kelas, jurusan, urlEncode(sheet_name));
+         sendDataToSpreadsheet(urlEncode(nama), kelas, jurusan, urlEncode(config.sheet_name));
          telegram_notify(nama + " masuk pukul "+getTime());
 
          lcd.clear();
@@ -362,7 +362,7 @@ void verifyData(String uid){
 void sendDataToSpreadsheet(String nama, String kelas, String jurusan, String sheet){
   if (WiFi.status() == WL_CONNECTED){
     HTTPClient http;
-    String payload = "?sheet="+config.sheet_name+"&nama="+nama+"&kelas="+kelas+"&jurusan="+jurusan;
+    String payload = "?sheet="+sheet+"&nama="+nama+"&kelas="+kelas+"&jurusan="+jurusan;
 
     http.begin(config.sheet_url + payload);
 
