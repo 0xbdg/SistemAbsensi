@@ -89,7 +89,7 @@ bool saveConfig() {
   doc["chat_id"] = config.chat_id;
   doc["sheet_url"] = config.sheet_url;
   doc["sheet_name"] = config.sheet_name;
-  doc["api_endpoint_url"] = config.api_url;
+  doc["api_endpoint_url"] = config.api_endpoint_url;
 
   File file = SPIFFS.open(CONFIG_FILE, "w");
   if (!file) return false;
