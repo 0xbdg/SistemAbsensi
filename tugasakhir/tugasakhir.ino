@@ -12,6 +12,7 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <UniversalTelegramBot.h>
+#include <WiFiClientSecure.h>
 
 #include "SPIFFS.h"
 #include "time.h"
@@ -46,6 +47,9 @@ struct Config {
   String sheet_name;
   String api_endpoint_url;
 } config;
+
+WiFiClientSecure secured_client;
+UniversalTelegramBot bot(config.bot_token, secured_client);
 
 bool loadConfig() {
   if (!SPIFFS.exists(CONFIG_FILE)) return false;
@@ -103,7 +107,9 @@ String processor(const String& var) {
   return String();
 }
 
-void telegram_notify(){
+void telegram_notify(String notif){
+  bool ok = bot.sendMessage(config.chat_id, notif, "");
+  Serial.printf("Sent \"%s\" → %s\n", notif, ok ? "OK" : "FAIL");
 }
 
 void setup() {
@@ -146,6 +152,8 @@ void setup() {
 
   lcd.clear();
   Serial.println(WiFi.localIP());
+  secured_client.setCACert(TELEGRAM_CERTIFICATE_ROOT);
+  secured_client.setHandshakeTimeout(120000);
  
   pinMode(BUZZER_PIN, OUTPUT);
   lcd.setCursor(1, 0);
@@ -319,6 +327,7 @@ void verifyData(String uid){
          String jurusan = doc["jurusan"];
 
          sendDataToSpreadsheet(urlEncode(nama), kelas, jurusan, urlEncode(sheet_name));
+         telegram_notify(nama + " masuk pukul "+getTime());
 
          lcd.clear();
          lcd.setCursor(0,0);
