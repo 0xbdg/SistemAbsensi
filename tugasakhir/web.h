@@ -94,11 +94,11 @@ const char index_html[] PROGMEM = R"rawliteral(
       <h3>WiFi</h3>
       <form method="POST" action="/save-wifi">
         <label for="botToken">SSID</label>
-        <input type="text" id="username" name="ssid" required>
+        <input type="text" id="username" name="ssid" value="%SSID%" required>
         <div class="current-value">Saat ini: %SSID%</div>
 
         <label for="chatId">WiFi Password</label>
-        <input type="text" id="password" name="password" required>
+        <input type="text" id="password" name="password" value="%PASS%" required>
         <div class="current-value">Saat ini: %PASS%</div>
 
         <input type="submit" value="Simpan Kredensial">
@@ -109,11 +109,11 @@ const char index_html[] PROGMEM = R"rawliteral(
       <h3>Admin Auth</h3>
       <form method="POST" action="/save-admin">
         <label for="botToken">Admin Username</label>
-        <input type="text" id="username" name="username" required>
+        <input type="text" id="username" name="username" value="%USERNAME%" required>
         <div class="current-value">Saat ini: %USERNAME%</div>
 
         <label for="chatId">Admin Password</label>
-        <input type="text" id="password" name="password" required>
+        <input type="text" id="password" name="password" value="%USER_PASS%" required>
         <div class="current-value">Saat ini: %USER_PASS%</div>
 
         <input type="submit" value="Simpan Kredensial">
@@ -124,12 +124,12 @@ const char index_html[] PROGMEM = R"rawliteral(
       <h3>Telegram</h3>
       <form method="POST" action="/save-telegram">
         <label for="botToken">Bot Token</label>
-        <input type="text" id="botToken" name="botToken" required>
-        <div class="current-value">Saat ini: 123456:ABCDEF-xxx</div>
+        <input type="text" id="botToken" name="botToken" value="%BOT_TOKEN%" required>
+        <div class="current-value">Saat ini: %BOT_TOKEN%</div>
 
         <label for="chatId">Chat ID</label>
-        <input type="text" id="chatId" name="chatId" required>
-        <div class="current-value">Saat ini: 987654321</div>
+        <input type="text" id="chatId" name="chatId" value="%CHAT_ID%" required>
+        <div class="current-value">Saat ini: %CHAT_ID%</div>
 
         <input type="submit" value="Simpan Telegram">
       </form>
@@ -139,12 +139,12 @@ const char index_html[] PROGMEM = R"rawliteral(
       <h3>Google Spreadsheet</h3>
       <form method="POST" action="/save-spreadsheet">
         <label for="sheetUrl">App Script URL</label>
-        <input type="text" id="sheetUrl" name="sheetUrl" placeholder="Ex: https://script.google.com/macros/s/[ID]/exec">
-        <div class="current-value">Saat ini: https://docs.google.com/spreadsheets/...</div>
+        <input type="text" id="sheetUrl" name="sheetUrl" value="%SHEET_URL%" placeholder="Ex: https://script.google.com/macros/s/[ID]/exec">
+        <div class="current-value">Saat ini: %SHEET_URL%</div>
 
         <label for="sheetApiKey">Sheet</label>
-        <input type="text" id="sheetApiKey" name="sheetName" placeholder="Ex: Sheet1">
-        <div class="current-value">Saat ini: AIzaSyD********</div>
+        <input type="text" id="sheetApiKey" name="sheetName" value="%SHEET_NAME%" placeholder="Ex: Sheet1">
+        <div class="current-value">Saat ini: %SHEET_NAME%</div>
 
         <input type="submit" value="Simpan Spreadsheet">
       </form>
@@ -154,8 +154,8 @@ const char index_html[] PROGMEM = R"rawliteral(
       <h3>API Endpoint</h3>
       <form method="POST" action="/save-api">
         <label for="apiUrl">Endpoint URL</label>
-        <input type="text" id="apiUrl" name="apiUrl" placeholder="Ex: https://example.com/data/siswa">
-        <div class="current-value">Saat ini: https://example.com/api/post</div>
+        <input type="text" id="apiUrl" name="apiUrl" value="%API_ENDPOINT%" placeholder="Ex: https://example.com/data/siswa">
+        <div class="current-value">Saat ini: %API_ENDPOINT%</div>
 
         <input type="submit" value="Simpan API">
       </form>

@@ -99,14 +99,6 @@ bool saveConfig() {
   return true;
 }
 
-String processor(const String& var) {
-  if (var == "SSID") return config.wifi_ssid;
-  if (var == "PASS") return config.wifi_pass;
-  if (var == "USERNAME") return config.admin_name;
-  if (var == "USER_PASS") return config.admin_pass;
-  return String();
-}
-
 void telegram_notify(String notif){
   bool ok = bot.sendMessage(config.chat_id, notif, ""); 
 }
@@ -168,7 +160,19 @@ void setup() {
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
       if(!request->authenticate(config.admin_name.c_str(), config.admin_pass.c_str()))
           return request->requestAuthentication();
-      request->send(200, "text/html", index_html);
+
+      String page=index_html;
+      page.replace("%SSID%", config.wifi_ssid.c_str());
+      page.replace("%PASS%", config.wifi_pass.c_str());
+      page.replace("%USERNAME%", config.admin_name.c_str());
+      page.replace("%USER_PASS%", config.admin_pass.c_str());
+      page.replace("%BOT_TOKEN%", config.bot_token.c_str());
+      page.replace("%CHAT_ID%", config.chat_id.c_str());
+      page.replace("%SHEET_URL%", config.sheet_url.c_str());
+      page.replace("%SHEET_NAME%", config.sheet_name.c_str());
+      page.replace("%API_ENDPOINT%", config.api_endpoint_url.c_str());
+ 
+      request->send(200, "text/html", page);
   }); 
 
   server.on("/save-wifi", HTTP_POST, [](AsyncWebServerRequest *request){
