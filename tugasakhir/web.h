@@ -7,7 +7,7 @@ const char index_html[] PROGMEM = R"rawliteral(
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Attendance Panel Config</title>
+  <title>Panel Konfigurasi</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -88,7 +88,7 @@ const char index_html[] PROGMEM = R"rawliteral(
 </head>
 <body>
   <div class="container">
-    <h2>Konfigurasi ESP32</h2> 
+    <h2>Konfigurasi Alat</h2> 
 
     <div class="section">
       <h3>WiFi</h3>
@@ -139,11 +139,11 @@ const char index_html[] PROGMEM = R"rawliteral(
       <h3>Google Spreadsheet</h3>
       <form method="POST" action="/save-spreadsheet">
         <label for="sheetUrl">App Script URL</label>
-        <input type="text" id="sheetUrl" name="sheetUrl" value="%SHEET_URL%" placeholder="Ex: https://script.google.com/macros/s/[ID]/exec">
+        <input type="text" id="sheetUrl" name="sheetUrl" value="%SHEET_URL%" placeholder="Ex: https://script.google.com/macros/s/[ID]/exec" required>
         <div class="current-value">Saat ini: %SHEET_URL%</div>
 
         <label for="sheetApiKey">Sheet</label>
-        <input type="text" id="sheetApiKey" name="sheetName" value="%SHEET_NAME%" placeholder="Ex: Sheet1">
+        <input type="text" id="sheetApiKey" name="sheetName" value="%SHEET_NAME%" placeholder="Ex: Sheet1" required>
         <div class="current-value">Saat ini: %SHEET_NAME%</div>
 
         <input type="submit" value="Simpan Spreadsheet">
@@ -154,7 +154,7 @@ const char index_html[] PROGMEM = R"rawliteral(
       <h3>API Endpoint</h3>
       <form method="POST" action="/save-api">
         <label for="apiUrl">Endpoint URL</label>
-        <input type="text" id="apiUrl" name="apiUrl" value="%API_ENDPOINT%" placeholder="Ex: https://example.com/data/siswa">
+        <input type="text" id="apiUrl" name="apiUrl" value="%API_ENDPOINT%" placeholder="Ex: https://example.com/data/siswa" required>
         <div class="current-value">Saat ini: %API_ENDPOINT%</div>
 
         <input type="submit" value="Simpan API">
