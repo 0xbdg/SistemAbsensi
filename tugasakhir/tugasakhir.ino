@@ -108,8 +108,7 @@ String processor(const String& var) {
 }
 
 void telegram_notify(String notif){
-  bool ok = bot.sendMessage(config.chat_id, notif, "");
-  Serial.printf("Sent \"%s\" → %s\n", notif, ok ? "OK" : "FAIL");
+  bool ok = bot.sendMessage(config.chat_id, notif, ""); 
 }
 
 void setup() {
@@ -121,7 +120,7 @@ void setup() {
   WiFiManager wm; 
 
   if(!SPIFFS.begin(true)){
-    Serial.println("An Error has occurred while mounting SPIFFS");
+    Serial.println(F("An Error has occurred while mounting SPIFFS"));
     return;
   }
 
@@ -143,11 +142,11 @@ void setup() {
   check = wm.autoConnect(config.wifi_ssid.c_str(), config.wifi_pass.c_str());
 
   if(!check){
-    Serial.println("connecting...");
+    Serial.println(F("connecting..."));
     lcd.setCursor(0,0);
-    lcd.print("gagal terkoneksi");
+    lcd.print(F("gagal terkoneksi"));
     lcd.setCursor(0,1);
-    lcd.print("ke internet!!");
+    lcd.print(F("ke internet!!"));
   }
 
   lcd.clear();
@@ -157,9 +156,9 @@ void setup() {
  
   pinMode(BUZZER_PIN, OUTPUT);
   lcd.setCursor(1, 0);
-  lcd.print("Metschoo Attendance");
+  lcd.print(F("Metschoo Attendance"));
   lcd.setCursor(3, 2);
-  lcd.print("Tap kartu anda");
+  lcd.print(F("Tap kartu anda"));
 
   while (!Serial);
   SPI.begin();
@@ -169,7 +168,7 @@ void setup() {
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
       if(!request->authenticate(config.admin_name.c_str(), config.admin_pass.c_str()))
           return request->requestAuthentication();
-      request->send(200, "text/html", index_html, processor);
+      request->send(200, "text/html", index_html);
   });
 
   server.on("/logout", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -331,9 +330,9 @@ void verifyData(String uid){
 
          lcd.clear();
          lcd.setCursor(0,0);
-         lcd.print("NAMA:"+String(nama));
+         lcd.print("NAMA:"+nama);
          lcd.setCursor(0,1);
-         lcd.print("KELAS:"+String(kelas) + " " + String(jurusan) );
+         lcd.print("KELAS:"+kelas + " " + jurusan );
          lcd.setCursor(0,2);
          lcd.print("TANGGAL:"+getDate());
          lcd.setCursor(0,3);
