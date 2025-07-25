@@ -88,7 +88,18 @@ const char index_html[] PROGMEM = R"rawliteral(
 </head>
 <body>
   <div class="container">
-    <h2>Konfigurasi Alat</h2> 
+    <h2>Konfigurasi Alat</h2>
+
+    <div class="section">
+      <h3>Device</h3>
+      <form id="host" method="POST" action="/save-device">
+        <label for="deviceName">Nama</label>
+        <input type="text" id="device" name="device" value="%DEVICE%" pattern="^[a-zA-Z0-9]([a-zA-Z0-9\-]*[a-zA-Z0-9])?$" title="Hanya huruf, angka, dan tanda minus (-). Tidak diawali/diakhiri tanda minus. Tidak boleh spasi atau titik." required>
+        <div class="current-value">Saat ini: %DEVICE%</div>
+
+        <input type="submit" value="Simpan perangkat">
+      </form>
+    </div>
 
     <div class="section">
       <h3>WiFi</h3>
@@ -165,6 +176,19 @@ const char index_html[] PROGMEM = R"rawliteral(
   <footer class="footer">
     <p>&copy; 2025 Benjamin Dharma Guntara. All rights reserved.</p>
   </footer>
+  <script>
+        const form = document.getElementById('host');
+        const input = document.getElementById('device');
+
+        form.addEventListener('submit', function (e) {
+          const value = input.value;
+
+          if (/--/.test(value) || /\s/.test(value) || /\./.test(value)) {
+            e.preventDefault(); 
+            return;
+          }
+        });
+  </script>
 </body>
 </html>
 )rawliteral";

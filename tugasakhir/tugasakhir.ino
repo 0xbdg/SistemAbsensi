@@ -13,6 +13,7 @@
 #include <ESPAsyncWebServer.h>
 #include <UniversalTelegramBot.h>
 #include <WiFiClientSecure.h>
+#include <ESPmDNS.h>
 
 #include "SPIFFS.h"
 #include "time.h"
@@ -37,6 +38,7 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 AsyncWebServer server(80);
 
 struct Config {
+  String device_name;
   String wifi_ssid;
   String wifi_pass;
   String admin_name;
@@ -62,6 +64,8 @@ bool loadConfig() {
   file.close();
   if (error) return false;
 
+  config.device_name = doc["device_name"].as<String>();
+
   config.wifi_ssid = doc["wifi_ssid"].as<String>();
   config.wifi_pass = doc["wifi_pass"].as<String>();
 
@@ -81,6 +85,7 @@ bool loadConfig() {
 
 bool saveConfig() {
   StaticJsonDocument<512> doc;
+  doc["device_name"] = config.device_name;
   doc["wifi_ssid"] = config.wifi_ssid;
   doc["wifi_pass"] = config.wifi_pass;
   doc["admin_name"] = config.admin_name;
@@ -103,6 +108,13 @@ void telegram_notify(String notif){
   bool ok = bot.sendMessage(config.chat_id, notif, ""); 
 }
 
+void setupMDNS() {
+  MDNS.end(); 
+  if (!MDNS.begin(config.device_name.c_str())) {
+    Serial.println("Error setting up MDNS responder!");
+  }
+}
+
 void setup() {
   lcd.begin(20,4);
   WiFi.mode(WIFI_STA);
@@ -118,6 +130,7 @@ void setup() {
 
   if (!loadConfig()) {
     Serial.println("No config found, setting defaults...");
+    config.device_name = "absensi";
     config.wifi_ssid = "0xbdg";
     config.wifi_pass = "metschoo";
     config.admin_name = "admin";
@@ -140,9 +153,12 @@ void setup() {
     lcd.setCursor(0,1);
     lcd.print(F("ke internet!!"));
   }
-
   lcd.clear();
+
   Serial.println(WiFi.localIP());
+
+  setupMDNS();
+
   secured_client.setCACert(TELEGRAM_CERTIFICATE_ROOT);
   secured_client.setHandshakeTimeout(120000);
  
@@ -162,6 +178,7 @@ void setup() {
           return request->requestAuthentication();
 
       String page=index_html;
+      page.replace("%DEVICE%", config.device_name.c_str());
       page.replace("%SSID%", config.wifi_ssid.c_str());
       page.replace("%PASS%", config.wifi_pass.c_str());
       page.replace("%USERNAME%", config.admin_name.c_str());
@@ -173,7 +190,18 @@ void setup() {
       page.replace("%API_ENDPOINT%", config.api_endpoint_url.c_str());
  
       request->send(200, "text/html", page);
-  }); 
+  });
+
+  server.on("/save-device", HTTP_POST, [](AsyncWebServerRequest *request){
+    if(request->hasParam("device", true)) config.device_name = request->getParam("device", true)->value();
+
+    if(saveConfig()) {
+      setupMDNS();
+      request->send(200, "text/html", "<h2>Device Saved. Success...</h2>");
+    } else {
+      request->send(500, "text/plain", "Failed to save Device config");
+    }
+  });
 
   server.on("/save-wifi", HTTP_POST, [](AsyncWebServerRequest *request){
     if(request->hasParam("ssid", true)) config.wifi_ssid = request->getParam("ssid", true)->value();
