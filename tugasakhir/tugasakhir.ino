@@ -169,25 +169,63 @@ void setup() {
       if(!request->authenticate(config.admin_name.c_str(), config.admin_pass.c_str()))
           return request->requestAuthentication();
       request->send(200, "text/html", index_html);
-  });
-
-  server.on("/logout", HTTP_GET, [](AsyncWebServerRequest *request){
-      request->send(401);
-  });
-
-  server.on("/logged-out", HTTP_GET, [](AsyncWebServerRequest *request){
-      request->send(200, "text/html", logout_html);
-  });
+  }); 
 
   server.on("/save-wifi", HTTP_POST, [](AsyncWebServerRequest *request){
     if(request->hasParam("ssid", true)) config.wifi_ssid = request->getParam("ssid", true)->value();
     if(request->hasParam("password", true)) config.wifi_pass = request->getParam("password", true)->value();
 
     if(saveConfig()) {
-      request->send(200, "text/html", "<h2>WiFi Saved. Restarting...</h2>");
-      delay(1000); 
+      request->send(200, "text/html", "<h2>WiFi Saved. Success...</h2>");
     } else {
       request->send(500, "text/plain", "Failed to save WiFi config");
+    }
+  });
+
+  server.on("/save-admin", HTTP_POST, [](AsyncWebServerRequest *request){
+    if(request->hasParam("username", true)) config.admin_name = request->getParam("username", true)->value();
+    if(request->hasParam("password", true)) config.admin_pass = request->getParam("password", true)->value();
+
+    if(saveConfig()) {
+      request->send(200, "text/html", "<h2>Admin Saved. Success...</h2>");
+         
+    } else {
+      request->send(500, "text/plain", "Failed to save Admin config");
+    }
+  });
+
+  server.on("/save-telegram", HTTP_POST, [](AsyncWebServerRequest *request){
+    if(request->hasParam("botToken", true)) config.bot_token = request->getParam("botToken", true)->value();
+    if(request->hasParam("chatId", true)) config.chat_id = request->getParam("chatId", true)->value();
+
+    if(saveConfig()) {
+      request->send(200, "text/html", "<h2>Telegram Saved. Success...</h2>");
+                      
+    } else {
+      request->send(500, "text/plain", "Failed to save Telegram config");
+    }
+  });
+
+  server.on("/save-spreadsheet", HTTP_POST, [](AsyncWebServerRequest *request){
+    if(request->hasParam("sheetUrl", true)) config.sheet_url = request->getParam("sheetUrl", true)->value();
+    if(request->hasParam("sheetName", true)) config.sheet_name = request->getParam("sheetName", true)->value();
+
+    if(saveConfig()) {
+      request->send(200, "text/html", "<h2>Spreadsheet Saved. Success...</h2>");
+                      
+    } else {
+      request->send(500, "text/plain", "Failed to save Spreadsheet config");
+    }
+  });
+
+  server.on("/save-api", HTTP_POST, [](AsyncWebServerRequest *request){
+    if(request->hasParam("apiUrl", true)) config.api_endpoint_url = request->getParam("apiUrl", true)->value();
+
+    if(saveConfig()) {
+      request->send(200, "text/html", "<h2>API Saved. Success...</h2>");
+                      
+    } else {
+      request->send(500, "text/plain", "Failed to save API config");
     }
   });
 

@@ -1,6 +1,8 @@
 # Sistem Absensi
 Sistem absensi berbasis ESP32
 
+## using arduino-cli
+
 ### compile
 
 ```

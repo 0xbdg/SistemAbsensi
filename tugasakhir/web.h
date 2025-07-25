@@ -7,7 +7,7 @@ const char index_html[] PROGMEM = R"rawliteral(
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ESP32 Panel [0xbdg]</title>
+  <title>Attendance Panel Config</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -88,8 +88,7 @@ const char index_html[] PROGMEM = R"rawliteral(
 </head>
 <body>
   <div class="container">
-    <h2>Konfigurasi ESP32</h2>
-    <button onclick="logoutButton()">Logout</button>
+    <h2>Konfigurasi ESP32</h2> 
 
     <div class="section">
       <h3>WiFi</h3>
@@ -123,7 +122,7 @@ const char index_html[] PROGMEM = R"rawliteral(
  
     <div class="section">
       <h3>Telegram</h3>
-      <form method="POST" action="/save-tele">
+      <form method="POST" action="/save-telegram">
         <label for="botToken">Bot Token</label>
         <input type="text" id="botToken" name="botToken" required>
         <div class="current-value">Saat ini: 123456:ABCDEF-xxx</div>
@@ -144,7 +143,7 @@ const char index_html[] PROGMEM = R"rawliteral(
         <div class="current-value">Saat ini: https://docs.google.com/spreadsheets/...</div>
 
         <label for="sheetApiKey">Sheet</label>
-        <input type="text" id="sheetApiKey" name="sheet" placeholder="Ex: Sheet1">
+        <input type="text" id="sheetApiKey" name="sheetName" placeholder="Ex: Sheet1">
         <div class="current-value">Saat ini: AIzaSyD********</div>
 
         <input type="submit" value="Simpan Spreadsheet">
@@ -166,26 +165,6 @@ const char index_html[] PROGMEM = R"rawliteral(
   <footer class="footer">
     <p>&copy; 2025 Benjamin Dharma Guntara. All rights reserved.</p>
   </footer>
-  <script>
-      function logoutButton() {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "/logout", true);
-        xhr.send();
-        setTimeout(function(){ window.open("/logged-out","_self"); }, 1000);
-      }
-  </script>
-</body>
-</html>
-)rawliteral";
-
-const char logout_html[] PROGMEM = R"rawliteral(
-<!DOCTYPE HTML><html>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-<body>
-  <p>Logged out or <a href="/">return to homepage</a>.</p>
-  <p><strong>Note:</strong> close all web browser tabs to complete the logout process.</p>
 </body>
 </html>
 )rawliteral";
