@@ -32,6 +32,6 @@ sudo esptool --chip esp32 --port <PORT> write-flash 0x1E0000 spiffs.bin
 verify
 
 ```
-esptool --port <PORT> write-flash 0x1000 bootloader.bin 0x10000 app.bin 0x1E0000 spiffs.bin
+sudo esptool --chip esp32 --port <PORT> write-flash 0x1000 bootloader.bin 0x10000 app.bin 0x1E0000 spiffs.bin
 
 ```
