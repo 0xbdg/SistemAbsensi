@@ -11,7 +11,6 @@
 #include <HTTPClient.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-#include <UniversalTelegramBot.h>
 #include <WiFiClientSecure.h>
 #include <ESPmDNS.h>
 
@@ -49,9 +48,6 @@ struct Config {
   String sheet_name;
   String api_endpoint_url;
 } config;
-
-WiFiClientSecure secured_client;
-UniversalTelegramBot bot(config.bot_token, secured_client);
 
 bool loadConfig() {
   if (!SPIFFS.exists(CONFIG_FILE)) return false;
@@ -105,7 +101,22 @@ bool saveConfig() {
 }
 
 void telegram_notify(String notif){
-  bool ok = bot.sendMessage(config.chat_id, notif, ""); 
+  HTTPClient http;
+  String url = "https://api.telegram.org/bot"+ config.bot_token +"/sendMessage?chat_id="+ config.chat_id+"&text="+notif;
+
+  http.begin(url);
+
+  int status_code = http.GET();
+
+  if (status_code > 0){
+      Serial.println("data terkirim ke telegram");
+  }
+    
+  else{
+      Serial.printf("Error dengan status: %d\n",status_code);
+  }
+
+  http.end();
 }
 
 void setupMDNS() {
@@ -153,14 +164,9 @@ void setup() {
     lcd.setCursor(0,1);
     lcd.print(F("ke internet!!"));
   }
-  lcd.clear();
-
-  Serial.println(WiFi.localIP());
+  lcd.clear(); 
 
   setupMDNS();
-
-  secured_client.setCACert(TELEGRAM_CERTIFICATE_ROOT);
-  secured_client.setHandshakeTimeout(120000);
  
   pinMode(BUZZER_PIN, OUTPUT);
   lcd.setCursor(1, 0);
@@ -265,24 +271,19 @@ void setup() {
 }
 
 void loop() {
-  if (!mfrc522.PICC_IsNewCardPresent()) {
-        return;
-  }
+  if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
+    Serial.print("Card UID: ");
+    MFRC522Debug::PrintUID(Serial, (mfrc522.uid));
+    Serial.println();
 
-  if (!mfrc522.PICC_ReadCardSerial()) {
-        return;
+    String uid = getUID();
+    Serial.println(uid);
+    verifyData(uid);
+
+    mfrc522.PICC_HaltA();
+    mfrc522.PCD_StopCrypto1();
   }
  
-  Serial.print("Card UID: ");
-  MFRC522Debug::PrintUID(Serial, (mfrc522.uid));
-  Serial.println();
-
-  String uid = getUID();
-  Serial.println(uid);
-  verifyData(uid);
-
-  mfrc522.PICC_HaltA();
-  mfrc522.PCD_StopCrypto1();
   delay(1000);
   
 }
@@ -396,7 +397,7 @@ void verifyData(String uid){
          String jurusan = doc["jurusan"];
 
          sendDataToSpreadsheet(urlEncode(nama), kelas, jurusan, urlEncode(config.sheet_name));
-         telegram_notify(nama + " masuk pukul "+getTime());
+         telegram_notify(urlEncode(nama + " masuk pukul "+getTime()));
 
          lcd.clear();
          lcd.setCursor(0,0);
@@ -406,7 +407,7 @@ void verifyData(String uid){
          lcd.setCursor(0,2);
          lcd.print("TANGGAL:"+getDate());
          lcd.setCursor(0,3);
-         lcd.print("WAKTU:"+getTime());
+         lcd.print("WAKTU:"+getTime()); 
  
          tone(BUZZER_PIN, 1000);
 
